@@ -1,0 +1,2 @@
+# DropADime
+Transparent Fundraising App
