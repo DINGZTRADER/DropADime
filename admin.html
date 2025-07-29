@@ -1,0 +1,659 @@
+<!-- admin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Drop-a-Dime</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00ffcc">
+  <link rel="icon" href="DingsLogo.PNG" type="image/png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <style>
+    :root {
+      --primary-color: #00ffcc;
+      --secondary-color: #ffca28;
+      --danger-color: #ff5555;
+      --dark-bg: #121212;
+      --card-bg: #1f1f1f;
+      --row-bg: #222;
+      --input-bg: #333;
+      --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.15);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    body {
+      background-color: var(--dark-bg);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 12px;
+      min-height: 100vh;
+    }
+    .page-container { max-width: 900px; margin: 0 auto; width: 100%; }
+    .panel, .header {
+      max-width: 850px;
+      margin: 0 auto 20px auto;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+    }
+    h1, h2 { text-align: center; color: var(--primary-color); margin-top: 0; margin-bottom: 16px;}
+    .logo-container { text-align: center; margin-bottom: 12px; }
+    .logo-container img { width: 72px; display: block; margin: 0 auto 8px auto; transition: transform 0.3s ease;}
+    .logo-container img:hover { transform: scale(1.05);}
+    .contact-info { text-align: center; margin-bottom: 16px; background: var(--card-bg); border-radius: 12px; padding: 12px; max-width: 600px; margin-left: auto; margin-right: auto; box-shadow: var(--shadow-sm);}
+    .row {
+      display: flex; align-items: center; gap: 10px; background: var(--row-bg); padding: 14px 12px;
+      border-radius: 8px; margin-bottom: 12px; box-shadow: var(--shadow-sm); transition: transform 0.2s ease; flex-wrap: wrap;
+    }
+    .row:hover { transform: translateY(-2px); box-shadow: 0 3px 8px rgba(0,0,0,0.2);}
+    .row input, .row select, .row textarea {
+      font-size: 1em; padding: 10px; border-radius: 6px; border: none; background: var(--input-bg); color: #fff; transition: all 0.2s ease;
+      min-width: 90px; flex: 1; max-width: 145px;
+    }
+    .row input[type="date"] { min-width: 110px; max-width: 125px; }
+    .row textarea { min-width: 120px; max-width: 160px; min-height: 38px; }
+    .row input:focus, .row select:focus, .row textarea:focus { outline: 2px solid var(--primary-color); background: #3a3a3a;}
+    .row button.del { background: var(--danger-color); color: white; border: none; font-weight: bold; border-radius: 6px; padding: 10px 14px; cursor: pointer; transition: all 0.2s ease; min-width: 70px;}
+    #addRowBtn { background-color: var(--primary-color); color: #222; font-weight: bold; padding: 12px 16px; border-radius: 8px; border: none; cursor: pointer; margin-top: 16px; transition: all 0.2s ease; width: 100%; max-width: 200px; display: block; margin-left: auto; margin-right: auto;}
+    #purpose { width: 100%; max-width: 100%; font-family: Arial, sans-serif; margin-bottom: 10px; resize: vertical; min-height: 80px;}
+    .btns { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap;}
+    .btns button { background: #333; color: var(--primary-color); padding: 12px 18px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; flex: 1; max-width: 200px;}
+    button { transition: all 0.2s ease;}
+    .btns button:hover, #addRowBtn:hover, .row button.del:hover { filter: brightness(1.2); transform: translateY(-2px);}
+    button:active { transform: translateY(1px);}
+    #loginForm { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 24px; width: 100%; text-align: center; padding: 16px;}
+    #loginForm input, #loginForm button { width: 240px; margin: 8px 0; padding: 12px; border-radius: 8px; border: none; font-size: 1rem;}
+    #loginForm input { background: var(--input-bg); color: #fff;}
+    #loginForm input:focus { outline: 2px solid var(--primary-color);}
+    #loginForm button { background-color: var(--primary-color); color: #222; font-weight: bold; cursor: pointer; transition: all 0.2s ease;}
+    #loginForm button:hover { filter: brightness(1.1); transform: translateY(-2px);}
+    .purpose-container { margin-bottom: 24px; background: #232323; padding: 16px; border-radius: 8px;}
+    .purpose-container label { font-weight: bold; display: block; margin-bottom: 10px;}
+    .purpose-actions { display: flex; align-items: center; margin-top: 10px;}
+    .purpose-actions button { background-color: var(--primary-color); color: #222; font-weight: bold; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer;}
+    .return-link { text-align: center; margin: 16px auto; max-width: 850px; padding: 10px;}
+    .return-link a { color: var(--primary-color); text-decoration: none; font-weight: bold; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; display: inline-block;}
+    .return-link a:hover { background: rgba(0,255,204,0.1); transform: translateY(-2px);}
+    #purposeSavedMsg, #targetSavedMsg, #pwdSavedMsg { display: none; color: var(--primary-color); margin-left: 12px; font-weight: bold;}
+    .target-panel { margin-bottom: 14px; background: var(--card-bg); border-radius: 8px; box-shadow: var(--shadow-sm); padding: 14px 10px; text-align: center;}
+    .progress-bar-bg { background:#333; border-radius:8px; overflow:hidden; height:20px; width:100%; max-width:360px; margin:auto;}
+    .progress-bar-fill { height:100%; background:linear-gradient(90deg,#00ffcc 80%,#ffca28 100%); transition:width 0.6s cubic-bezier(.25,.8,.25,1);}
+    .progress-summary { text-align:center; margin-top:6px; font-size:1.02em;}
+    .estimate-info { margin: 12px 0 8px 0; text-align: center; color: #ffca28; font-size: 1.01em; font-style: italic;}
+    .modal, .modal-backdrop {
+      display:none; position:fixed; z-index:9999; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;
+      background:rgba(0,0,0,0.48);}
+    .modal-content { background:var(--card-bg); color:#fff; padding: 34px 20px; border-radius:14px; box-shadow:var(--shadow-md); max-width:420px; width:96vw; text-align:left; position:relative;}
+    .modal-content h3 { color: var(--primary-color);}
+    .modal-content .close { position:absolute; right: 12px; top: 12px; background: #222; color: #fff; font-size: 1.1em; border-radius: 50%; width: 28px; height: 28px; border: none; cursor: pointer;}
+    .modal-logtable { width:100%; font-size:0.97em; border-collapse:collapse;}
+    .modal-logtable th, .modal-logtable td { padding:7px 4px; border-bottom:1px solid #222;}
+    .modal-logtable th { color:var(--primary-color);}
+    .modal-logtable tr:hover { background:#252525;}
+    .undo-bar { text-align:center; margin-top:12px; }
+    .undo-btn { background:#ffca28; color:#222; font-weight:bold; border-radius:6px; border:none; padding:7px 20px; cursor:pointer; }
+    .undo-btn:hover { background:#ffe48b;}
+    .fund-dropdown { background:var(--input-bg); color:#fff; font-size:1em; border-radius:6px; border:none; padding:9px 10px; margin-bottom:10px;}
+    .mini-btn { background:var(--secondary-color); color:#222; font-weight:bold; border-radius:6px; border:none; padding:6px 14px; font-size:0.97em; margin-left:10px; cursor:pointer;}
+    .mini-btn:hover { background: #ffe48b;}
+    @media (max-width: 600px) {
+      body { padding: 8px;}
+      h1 { font-size: 1.5rem; }
+      h2 { font-size: 1.3rem;}
+      .row { flex-direction: column; gap: 8px; padding: 12px 10px;}
+      .row input, .row select, .row textarea { width: 100%; max-width: 100%; }
+      .panel, .header { width: 100%; margin: 12px auto; padding: 16px 12px; border-radius: 10px;}
+      .btns { flex-direction: column; align-items: center;}
+      .btns button { width: 100%; max-width: 100%;}
+      #loginForm input, #loginForm button { width: 100%; max-width: 280px;}
+      .purpose-actions { flex-direction: column; align-items: flex-start;}
+      #purposeSavedMsg, #targetSavedMsg, #pwdSavedMsg { margin: 8px 0 0 0;}
+      .progress-bar-bg { max-width: 98vw; }
+      .modal-content { padding:18px 4px;}
+    }
+    @media (max-width: 360px) {
+      .panel, .header { padding: 12px 8px;}
+      h1 { font-size: 1.4rem; }
+      #loginForm { padding: 10px 0;}
+    }
+    @media print {
+      .btns, #addRowBtn, #loginForm, .return-link, .mini-btn, .fund-dropdown, .undo-bar { display: none !important;}
+      .panel, .purpose-container, .header, body, .page-container, .target-panel { background: #fff !important; color: #111 !important; box-shadow: none !important;}
+      th, td, h1, h2, label, .purpose-text, .progress-summary, .estimate-info { color: #111 !important;}
+      .row { background: #fff !important; box-shadow: none !important;}
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <div class="contact-info">
+      <strong>Airtel:</strong> 0704650600<br>
+      <span style="color:#d4af37; font-size:0.95em;">(Peter Wacha)</span><br>
+      <strong>MTN:</strong> 0774178738<br>
+      <span style="color:#d4af37; font-size:0.95em;">(Abbey Musoke)</span>
+    </div>
+    <div class="header">
+      <div class="logo-container">
+        <img src="DingsLogo.PNG" alt="Logo" />
+        <h1>Admin Panel: Drop-a-Dime</h1>
+      </div>
+      <div id="loginForm">
+        <p>Enter Password:</p>
+        <input type="password" id="password" placeholder="Password..." autocomplete="current-password"/>
+        <button onclick="checkPassword()">Login</button>
+      </div>
+    </div>
+    <div class="return-link">
+      <a href="index.html">← Return to Main Screen</a>
+    </div>
+    <div style="display:none; margin-bottom:10px;" id="fundsBar">
+      <label for="fundSelect" style="font-weight:bold;color:var(--secondary-color);">Select Fundraiser: </label>
+      <select id="fundSelect" class="fund-dropdown" onchange="switchFundraiser()"></select>
+      <button class="mini-btn" onclick="createFundraiser()">+ New</button>
+      <button class="mini-btn" onclick="deleteFundraiser()">Delete Fundraiser</button>
+    </div>
+    <!-- Target/tally panel -->
+    <div class="panel" id="tallyPanel" style="margin-bottom:18px; display:none;">
+      <h2>Fundraiser Progress</h2>
+      <div style="display:flex; flex-wrap:wrap; gap:22px; align-items:center; justify-content:space-between;">
+        <div>
+          <label for="targetAmount" style="font-weight:bold; color:#ffca28;">Target Amount (UGX):</label><br>
+          <input type="number" id="targetAmount" style="padding:8px; border-radius:6px; width:160px; margin-top:4px;" min="0" />
+          <button onclick="saveTarget()" style="margin-left:8px; padding:8px 16px; border-radius:6px; background:#00ffcc; color:#222; font-weight:bold; border:none; cursor:pointer;">Save</button>
+          <span id="targetSavedMsg">Saved!</span>
+        </div>
+        <div style="min-width:180px;">
+          <div style="font-weight:bold;">Paid: <span id="tallyPaid" style="color:#00ffcc;">0 UGX</span></div>
+          <div style="font-weight:bold;">Pledged: <span id="tallyPledged" style="color:#ffca28;">0 UGX</span></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <div class="progress-bar-bg">
+          <div id="progressBar" class="progress-bar-fill" style="width:0%"></div>
+        </div>
+        <div id="progressSummary" class="progress-summary"></div>
+      </div>
+      <div class="estimate-info" id="estimateInfo"></div>
+    </div>
+    <div class="panel" id="adminPanel" style="display:none;">
+      <div class="purpose-container">
+        <label for="purpose">Fundraiser Purpose / Description:</label>
+        <textarea id="purpose" rows="3"></textarea>
+        <div class="purpose-actions">
+          <button onclick="savePurpose()">Save Purpose</button>
+          <span id="purposeSavedMsg">Saved!</span>
+        </div>
+      </div>
+      <div id="entryList"></div>
+      <button id="addRowBtn" onclick="addRow()">+ Add Row</button>
+      <div class="undo-bar" id="undoBar" style="display:none;">
+        <button class="undo-btn" onclick="undoDelete()">Undo Delete</button>
+        <span id="undoMsg"></span>
+      </div>
+      <div class="btns">
+        <button onclick="exportData()">Export JSON</button>
+        <button onclick="exportCSV()">Export CSV</button>
+        <button onclick="importData()">Import JSON/CSV</button>
+        <button onclick="backupData()">Backup All</button>
+        <button onclick="restoreData()">Restore</button>
+        <button onclick="window.print()">Print Report</button>
+        <button onclick="clearAll()" style="background:#222; color:#ff5555;">Clear All</button>
+        <button onclick="showLog()">View Activity Log</button>
+        <button onclick="showPwdChange()">Change Password</button>
+      </div>
+    </div>
+    <!-- Modal: Activity Log -->
+    <div class="modal" id="logModal">
+      <div class="modal-content">
+        <button class="close" onclick="closeLog()">&times;</button>
+        <h3>Admin Activity Log</h3>
+        <div id="logTableWrap"></div>
+        <button class="mini-btn" onclick="exportLog()">Export Log CSV</button>
+      </div>
+    </div>
+    <!-- Modal: Import/Restore -->
+    <div class="modal" id="importModal">
+      <div class="modal-content">
+        <button class="close" onclick="closeImport()">&times;</button>
+        <h3>Import / Restore Data</h3>
+        <input type="file" id="importFile" accept=".json,.csv,application/json,text/csv" />
+        <button class="mini-btn" onclick="handleImport()">Import</button>
+        <div id="importMsg" style="color:#ffca28;margin-top:10px;"></div>
+      </div>
+    </div>
+    <!-- Modal: Change Password -->
+    <div class="modal" id="pwdModal">
+      <div class="modal-content">
+        <button class="close" onclick="closePwdChange()">&times;</button>
+        <h3>Change Admin Password</h3>
+        <input type="password" id="oldPwd" placeholder="Old password..." autocomplete="current-password" style="width:96%;margin-bottom:7px;" /><br>
+        <input type="password" id="newPwd1" placeholder="New password..." style="width:96%;margin-bottom:7px;" /><br>
+        <input type="password" id="newPwd2" placeholder="Repeat new password..." style="width:96%;margin-bottom:10px;" /><br>
+        <button class="mini-btn" onclick="changePwd()">Change Password</button>
+        <span id="pwdSavedMsg"></span>
+      </div>
+    </div>
+  </div>
+  <script>
+    // --- PWA install prompt
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js').then(() => {});
+    }
+    window.addEventListener('beforeinstallprompt', function(e){
+      e.preventDefault(); window.deferredPrompt = e;
+    });
+
+    // --- Multiple fundraisers support
+    let ALL_FUNDS_KEY = 'allFunds';
+    let CURR_FUND_KEY = 'currentFund';
+    let currFund = localStorage.getItem(CURR_FUND_KEY) || "Default";
+    let allFunds = JSON.parse(localStorage.getItem(ALL_FUNDS_KEY) || '["Default"]');
+    // Fund-specific key generator
+    function FKEY(key) { return `${currFund}_${key}`; }
+
+    // --- Admin Password
+    let PASSWORD = localStorage.getItem("adminPwd") || "wacha2024";
+    let entries = [], undoStack = [], undoType = null, lastDeleted = null, lastCleared = null, adminLog = [];
+    // Log action
+    function logAction(type, info) {
+      let log = JSON.parse(localStorage.getItem(FKEY('adminLog')) || '[]');
+      log.push({
+        ts: new Date().toISOString(),
+        type, info, admin: "Admin" // Optionally support multi-admin
+      });
+      localStorage.setItem(FKEY('adminLog'), JSON.stringify(log));
+    }
+    // Undo Delete / Clear
+    function undoDelete() {
+      if (undoType === 'delete' && lastDeleted) {
+        entries.splice(lastDeleted.idx, 0, lastDeleted.entry);
+        renderRows(); saveEntries();
+        logAction('undo_delete', {name: lastDeleted.entry.name});
+        lastDeleted = null; undoType = null; document.getElementById('undoBar').style.display = 'none';
+      } else if (undoType === 'clear' && lastCleared) {
+        entries = lastCleared.slice();
+        renderRows(); saveEntries();
+        logAction('undo_clear', {});
+        lastCleared = null; undoType = null; document.getElementById('undoBar').style.display = 'none';
+      }
+    }
+    // Fundraiser Dropdown
+    function refreshFundDropdown() {
+      let sel = document.getElementById('fundSelect');
+      sel.innerHTML = allFunds.map(f => `<option${f===currFund?' selected':''}>${f}</option>`).join("");
+    }
+    function switchFundraiser() {
+      currFund = document.getElementById('fundSelect').value;
+      localStorage.setItem(CURR_FUND_KEY, currFund);
+      loadAll(); // reload entries, settings, etc
+      logAction('switch_fund', {fund: currFund});
+    }
+    function createFundraiser() {
+      let name = prompt("Enter a name for the new fundraiser:");
+      if (!name) return;
+      if (allFunds.includes(name)) { alert("That name already exists."); return;}
+      allFunds.push(name);
+      localStorage.setItem(ALL_FUNDS_KEY, JSON.stringify(allFunds));
+      currFund = name;
+      localStorage.setItem(CURR_FUND_KEY, currFund);
+      entries = [];
+      saveEntries();
+      loadAll();
+      refreshFundDropdown();
+      logAction('create_fund', {fund:name});
+    }
+    function deleteFundraiser() {
+      if (currFund === "Default") return alert("Cannot delete Default fundraiser!");
+      if (!confirm("Are you sure you want to delete this fundraiser?")) return;
+      // Remove all its data
+      for (let k of ["adminEntries","fundEntries","fundPurpose","fundTarget","adminLog"]) localStorage.removeItem(FKEY(k));
+      allFunds = allFunds.filter(f=>f!==currFund);
+      localStorage.setItem(ALL_FUNDS_KEY, JSON.stringify(allFunds));
+      currFund = "Default";
+      localStorage.setItem(CURR_FUND_KEY, currFund);
+      loadAll();
+      refreshFundDropdown();
+      logAction('delete_fund', {});
+    }
+    function loadAll() {
+      // Display funds bar if > 1
+      document.getElementById('fundsBar').style.display = allFunds.length>1 ? '' : 'none';
+      refreshFundDropdown();
+      loadEntries();
+      renderRows();
+      loadPurpose();
+      loadTarget();
+      updateTally();
+    }
+    // --- Entry Storage
+    function saveEntries() {
+      localStorage.setItem(FKEY('adminEntries'), JSON.stringify(entries));
+      localStorage.setItem(FKEY('fundEntries'), JSON.stringify(entries.map(e=>{
+        // Remove private admin note from public!
+        let {note, ...pub} = e; return pub;
+      })));
+    }
+    function loadEntries() {
+      entries = JSON.parse(localStorage.getItem(FKEY('adminEntries')) || '[]');
+    }
+    // UI rows
+    function renderRows() {
+      const entryList = document.getElementById('entryList');
+      entryList.innerHTML = '';
+      entries.forEach((e, i) => {
+        const div = document.createElement('div');
+        div.className = 'row';
+        div.innerHTML = `
+          <input placeholder="Name" value="${e.name || ''}" oninput="updateEntry(${i}, 'name', this.value)">
+          <input placeholder="Amount (UGX)" type="number" value="${e.amount || ''}" oninput="updateEntry(${i}, 'amount', this.value)">
+          <select onchange="updateEntry(${i}, 'status', this.value)">
+            <option value="paid" ${e.status === 'paid' ? 'selected' : ''}>✅ Paid</option>
+            <option value="pledged" ${e.status === 'pledged' ? 'selected' : ''}>🅿️ Pledged</option>
+          </select>
+          <input placeholder="Message (optional)" value="${e.message || ''}" oninput="updateEntry(${i}, 'message', this.value)">
+          <input type="date" value="${(e.date ? e.date.slice(0,10) : '')}" onchange="updateEntry(${i}, 'date', this.value)" ${e.status==='paid'?'required':''} title="Date paid/pledged">
+          <textarea placeholder="Admin Notes (not public)" oninput="updateEntry(${i}, 'note', this.value)">${e.note||''}</textarea>
+          <button class="del" onclick="deleteEntry(${i})">Delete</button>
+        `;
+        entryList.appendChild(div);
+      });
+      updateTally();
+    }
+    function addRow() {
+      const today = new Date().toISOString().slice(0,10);
+      entries.push({ name: '', amount: '', status: 'paid', message: '', date: today, note:"" });
+      renderRows();
+      saveEntries();
+      logAction('add_row', {});
+    }
+    function updateEntry(idx, field, value) {
+      if(field === 'amount') entries[idx][field] = Number(value);
+      else if(field === 'date') entries[idx][field] = value;
+      else entries[idx][field] = value;
+      saveEntries();
+      updateTally();
+      logAction('edit_entry', {idx, field});
+    }
+    function deleteEntry(idx) {
+      lastDeleted = {entry: entries[idx], idx};
+      undoType = 'delete';
+      document.getElementById('undoBar').style.display = '';
+      entries.splice(idx, 1);
+      renderRows();
+      saveEntries();
+      logAction('delete_entry', {name:lastDeleted.entry.name});
+    }
+    function clearAll() {
+      if (entries.length === 0) return;
+      if (confirm("Clear all entries? This can't be undone!")) {
+        lastCleared = entries.slice();
+        undoType = 'clear';
+        document.getElementById('undoBar').style.display = '';
+        entries = [];
+        saveEntries();
+        renderRows();
+        updateTally();
+        logAction('clear_all', {});
+      }
+    }
+    // Purpose/target per fundraiser
+    function savePurpose() {
+      const text = document.getElementById('purpose').value;
+      localStorage.setItem(FKEY('fundPurpose'), text);
+      document.getElementById('purposeSavedMsg').style.display = 'inline';
+      setTimeout(() => document.getElementById('purposeSavedMsg').style.display = 'none', 1200);
+      logAction('edit_purpose', {});
+    }
+    function loadPurpose() {
+      const text = localStorage.getItem(FKEY('fundPurpose')) || '';
+      if (document.getElementById('purpose')) document.getElementById('purpose').value = text;
+    }
+    function saveTarget() {
+      const value = Number(document.getElementById('targetAmount').value) || 0;
+      localStorage.setItem(FKEY('fundTarget'), value);
+      document.getElementById('targetSavedMsg').style.display = 'inline';
+      setTimeout(() => document.getElementById('targetSavedMsg').style.display = 'none', 1200);
+      updateTally();
+      logAction('edit_target', {value});
+    }
+    function loadTarget() {
+      const val = localStorage.getItem(FKEY('fundTarget'));
+      if(val) document.getElementById('targetAmount').value = val;
+    }
+    function updateTally() {
+      let paid = 0, pledged = 0, total = 0, dates = [];
+      entries.forEach(e => {
+        let amt = (typeof e.amount === 'number' && !isNaN(e.amount)) ? e.amount : 0;
+        if (e.status === 'paid') paid += amt;
+        if (e.status === 'pledged') pledged += amt;
+        if (e.date) dates.push(e.date);
+      });
+      total = paid + pledged;
+      document.getElementById('tallyPaid').textContent = paid.toLocaleString() + " UGX";
+      document.getElementById('tallyPledged').textContent = pledged.toLocaleString() + " UGX";
+      const target = Number(localStorage.getItem(FKEY('fundTarget'))) || 0;
+      const percent = target ? Math.min(Math.round((total / target) * 100),100) : 0;
+      document.getElementById('progressBar').style.width = (target?percent:0) + "%";
+      document.getElementById('progressSummary').innerHTML = target ?
+        `Raised UGX ${total.toLocaleString()} of UGX ${target.toLocaleString()} (${percent}%)`
+        : `Raised UGX ${total.toLocaleString()}`;
+      let info = "";
+      if (target && dates.length && total < target) {
+        const minDate = new Date(Math.min(...dates.map(d=>new Date(d).getTime()).filter(Boolean)));
+        const now = new Date();
+        const days = Math.max(1, Math.round((now - minDate) / (1000*60*60*24)));
+        const ratePerDay = total / days;
+        if (ratePerDay > 0) {
+          const remain = target - total;
+          const estDays = Math.ceil(remain / ratePerDay);
+          const estDate = new Date(now.getTime() + estDays*24*60*60*1000);
+          info = `At this rate, the target may be reached in ${estDays} day${estDays>1?'s':''} (by <b>${estDate.toLocaleDateString(undefined, { day:'2-digit', month:'short', year:'numeric' })}</b>).`;
+        } else {
+          info = `No contributions yet to estimate time to target.`;
+        }
+      } else if (target && total >= target) {
+        info = `🎉 Target achieved!`;
+      }
+      document.getElementById('estimateInfo').innerHTML = info;
+    }
+    // Export/Import/Backup
+    function exportData() {
+      const data = JSON.stringify(entries, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `${currFund}_dropadime_entries.json`;
+      a.click(); URL.revokeObjectURL(url);
+      logAction('export_json', {});
+    }
+    function exportCSV() {
+      if (!entries.length) return alert("No entries to export!");
+      const csv = [
+        ["Name", "Amount (UGX)", "Status", "Message", "Date Paid", "Admin Note"],
+        ...entries.map(e => [
+          `"${(e.name||"").replace(/"/g,'""')}"`,
+          e.amount || "",
+          e.status || "",
+          `"${(e.message||"").replace(/"/g,'""')}"`,
+          e.date ? e.date.slice(0,10) : "",
+          `"${(e.note||"").replace(/"/g,'""')}"`
+        ])
+      ].map(row=>row.join(",")).join("\r\n");
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `${currFund}_dropadime_entries.csv`;
+      a.click(); URL.revokeObjectURL(url);
+      logAction('export_csv', {});
+    }
+    function importData() {
+      document.getElementById('importModal').style.display = "flex";
+      document.getElementById('importMsg').innerHTML = "";
+      document.getElementById('importFile').value = "";
+    }
+    function closeImport() { document.getElementById('importModal').style.display = "none";}
+    function handleImport() {
+      const file = document.getElementById('importFile').files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e){
+        try {
+          let data;
+          if (file.name.endsWith(".json")) {
+            data = JSON.parse(e.target.result);
+          } else if (file.name.endsWith(".csv")) {
+            data = csvToEntries(e.target.result);
+          }
+          if (!Array.isArray(data)) throw "Invalid format";
+          entries = data;
+          saveEntries();
+          renderRows();
+          updateTally();
+          document.getElementById('importMsg').innerHTML = "Imported successfully!";
+          logAction('import_data', {});
+        } catch (err) {
+          document.getElementById('importMsg').innerHTML = "Import error: "+err;
+        }
+      };
+      reader.readAsText(file);
+    }
+    function csvToEntries(csv){
+      let [header,...lines] = csv.trim().split(/\r?\n/);
+      let cols = header.split(",");
+      return lines.map(l=>{
+        let vals = l.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g).map(s=>s.replace(/^"|"$/g,"").replace(/""/g,'"'));
+        let e = {};
+        cols.forEach((c,j)=>{
+          let k = c.trim().toLowerCase();
+          if (k.includes("name")) e.name = vals[j];
+          else if (k.includes("amount")) e.amount = Number(vals[j]);
+          else if (k.includes("status")) e.status = vals[j];
+          else if (k.includes("message")) e.message = vals[j];
+          else if (k.includes("date")) e.date = vals[j];
+          else if (k.includes("note")) e.note = vals[j];
+        });
+        if (!e.status) e.status = 'paid';
+        return e;
+      });
+    }
+    // Backup/restore all data (all funds)
+    function backupData() {
+      let data = {};
+      for(let k in localStorage){
+        if(!localStorage.hasOwnProperty(k)) continue;
+        if(/(adminEntries|fundEntries|fundPurpose|fundTarget|adminLog|adminPwd|allFunds|currentFund)/.test(k)) {
+          data[k] = localStorage.getItem(k);
+        }
+      }
+      const blob = new Blob([JSON.stringify(data,null,2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'dropadime_full_backup.json';
+      a.click(); URL.revokeObjectURL(url);
+      logAction('backup', {});
+    }
+    function restoreData() {
+      document.getElementById('importModal').style.display = "flex";
+      document.getElementById('importMsg').innerHTML = "<b>For full restore, import a full backup JSON file.</b>";
+      document.getElementById('importFile').value = "";
+      document.getElementById('importFile').onchange = function(e){
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e){
+          try {
+            let data = JSON.parse(e.target.result);
+            for(let k in data) {
+              localStorage.setItem(k, data[k]);
+            }
+            window.location.reload();
+            logAction('restore', {});
+          } catch (err) {
+            document.getElementById('importMsg').innerHTML = "Restore error: "+err;
+          }
+        };
+        reader.readAsText(file);
+      }
+    }
+    // Log viewer
+    function showLog() {
+      let log = JSON.parse(localStorage.getItem(FKEY('adminLog')) || '[]');
+      let tbl = `<table class="modal-logtable"><thead>
+        <tr><th>Time</th><th>Action</th><th>Info</th></tr></thead><tbody>
+        ${log.map(e=>`<tr><td>${(new Date(e.ts)).toLocaleString()}</td><td>${e.type}</td><td>${JSON.stringify(e.info||{})}</td></tr>`).join('')}
+        </tbody></table>`;
+      document.getElementById('logTableWrap').innerHTML = tbl;
+      document.getElementById('logModal').style.display = "flex";
+    }
+    function closeLog() { document.getElementById('logModal').style.display = "none";}
+    function exportLog() {
+      let log = JSON.parse(localStorage.getItem(FKEY('adminLog')) || '[]');
+      let csv = "Time,Action,Info\r\n" + log.map(e=>[
+        `"${(new Date(e.ts)).toLocaleString()}"`,
+        `"${e.type}"`,
+        `"${JSON.stringify(e.info||{})}"`
+      ].join(",")).join("\r\n");
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `${currFund}_adminlog.csv`;
+      a.click(); URL.revokeObjectURL(url);
+    }
+    // Password Change
+    function showPwdChange() {
+      document.getElementById('pwdModal').style.display = "flex";
+      document.getElementById('pwdSavedMsg').style.display = "none";
+      document.getElementById('oldPwd').value = '';
+      document.getElementById('newPwd1').value = '';
+      document.getElementById('newPwd2').value = '';
+    }
+    function closePwdChange() { document.getElementById('pwdModal').style.display = "none"; }
+    function changePwd() {
+      let old = document.getElementById('oldPwd').value;
+      let n1 = document.getElementById('newPwd1').value;
+      let n2 = document.getElementById('newPwd2').value;
+      if (old !== PASSWORD) { alert("Wrong old password!"); return;}
+      if (n1.length < 4) { alert("New password must be at least 4 chars."); return;}
+      if (n1 !== n2) { alert("New passwords do not match."); return;}
+      localStorage.setItem("adminPwd", n1);
+      PASSWORD = n1;
+      document.getElementById('pwdSavedMsg').textContent = "Saved!";
+      document.getElementById('pwdSavedMsg').style.display = 'inline';
+      setTimeout(()=>{closePwdChange();},1200);
+      logAction('change_password', {});
+    }
+    // Hide modals on click outside
+    window.onclick = function(event) {
+      ['logModal','importModal','pwdModal'].forEach(mid=>{
+        let m=document.getElementById(mid);
+        if (event.target===m) m.style.display="none";
+      });
+    }
+    // On startup
+    if (localStorage.getItem(FKEY('adminEntries'))) loadEntries();
+    window.renderRows = renderRows; window.updateEntry = updateEntry; window.deleteEntry = deleteEntry;
+    window.onload = function(){
+      if(allFunds.length>1) document.getElementById('fundsBar').style.display = '';
+      refreshFundDropdown();
+    }
+	function checkPassword() {
+  const pass = document.getElementById('password').value;
+  // Always use localStorage value if it exists
+  const truePwd = localStorage.getItem("adminPwd") || "wacha2024";
+  if (pass === truePwd) {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    document.getElementById('tallyPanel').style.display = '';
+    loadAll();
+  } else {
+    alert("Wrong password!");
+  }
+}
+
+  </script>
+</body>
+</html>

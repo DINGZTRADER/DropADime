@@ -1,0 +1,663 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drop-a-Dime Contributions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#00ffcc">
+  <link rel="preload" href="DingsLogo.PNG" as="image" />
+  <link rel="icon" href="DingsLogo.PNG" type="image/png">
+  <style>
+    :root {
+      --primary-color: #00ffcc;
+      --secondary-color: #ffca28;
+      --dark-bg: #121212;
+      --card-bg: #1f1f1f;
+      --row-bg: #222;
+      --input-bg: #333;
+      --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.15);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    body {
+      background-color: var(--dark-bg);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 12px;
+      min-height: 100vh;
+    }
+    .page-container {
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .header, .panel {
+      max-width: 800px;
+      margin: 0 auto 20px auto;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+    }
+    .logo-container {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .logo-container img {
+      width: 72px;
+      display: block;
+      margin: 0 auto 8px auto;
+      transition: transform 0.3s ease;
+    }
+    h1, h2 {
+      text-align: center;
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    .purpose-container {
+      margin-bottom: 24px;
+      background: #232323;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+    .purpose-label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+      color: var(--secondary-color);
+      font-size: 1.08em;
+    }
+    .purpose-text {
+      white-space: pre-line;
+      color: #fff;
+      font-size: 1.1em;
+      margin-bottom: 0;
+    }
+    .summary {
+      text-align: center;
+      margin-bottom: 18px;
+      font-size: 1.12em;
+      background: var(--card-bg);
+      padding: 14px 10px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      justify-content: center;
+    }
+    .summary .amount {
+      font-weight: bold;
+      color: var(--primary-color);
+      font-size: 1.18em;
+    }
+    .target-panel {
+      margin-bottom: 16px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .progress-bar-bg {
+      background:#333;
+      border-radius:8px;
+      overflow:hidden;
+      height:20px;
+      width:100%;
+      max-width:360px;
+      margin:auto;
+    }
+    .progress-bar-fill {
+      height:100%;
+      background:linear-gradient(90deg,#00ffcc 80%,#ffca28 100%);
+      transition:width 0.6s cubic-bezier(.25,.8,.25,1);
+    }
+    .progress-summary {
+      text-align:center;
+      margin-top:6px;
+      font-size:1.02em;
+    }
+    .pay-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin: 18px 0 10px 0;
+      flex-wrap: wrap;
+    }
+    .pay-btn {
+      background: var(--primary-color);
+      color: #222;
+      font-weight: bold;
+      padding: 14px 30px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1.13em;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pay-btn:hover {
+      background: #12ffe6;
+      transform: translateY(-2px) scale(1.03);
+    }
+    .mmodal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.48);
+      align-items: center; justify-content: center;
+    }
+    .mmodal-content {
+      background: var(--card-bg);
+      color: #fff;
+      padding: 34px 20px;
+      border-radius: 14px;
+      box-shadow: var(--shadow-md);
+      max-width: 340px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+    }
+    .mmodal-content h3 {
+      margin: 0 0 6px 0;
+      color: var(--primary-color);
+    }
+    .mmodal-content .close {
+      position: absolute;
+      right: 12px; top: 12px;
+      background: #222;
+      color: #fff;
+      font-size: 1.1em;
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      border: none;
+      cursor: pointer;
+    }
+    .mmodal-content .number {
+      font-size: 1.27em;
+      color: var(--secondary-color);
+      font-weight: bold;
+      margin-bottom: 7px;
+      display: block;
+    }
+    .estimate-info {
+      margin: 12px 0 8px 0;
+      text-align: center;
+      color: #ffca28;
+      font-size: 1.02em;
+      font-style: italic;
+    }
+    .copied {
+      color: #00ffcc;
+      font-weight: bold;
+      margin-left: 8px;
+      font-size: 1em;
+      display: inline;
+    }
+    .filters-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+      background: #181818;
+      border-radius: 8px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow-sm);
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .filters-bar select, .filters-bar input {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: none;
+      background: var(--input-bg);
+      color: #fff;
+      font-size: 1em;
+      min-width: 120px;
+      transition: background 0.2s;
+    }
+    .filters-bar button {
+      background: var(--primary-color);
+      color: #222;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 82px;
+    }
+    .filters-bar button:hover {
+      filter: brightness(1.1);
+    }
+    .refresh-btn, .print-btn {
+      background: var(--primary-color);
+      color: #222;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 18px;
+      cursor: pointer;
+      margin: 0 auto 22px auto;
+      display: block;
+      transition: all 0.2s;
+      max-width: 180px;
+    }
+    .refresh-btn:hover, .print-btn:hover {
+      filter: brightness(1.13);
+      transform: translateY(-2px);
+    }
+    .panel {
+      margin-top: 12px;
+    }
+    .contrib-section {
+      margin-bottom: 38px;
+    }
+    .contrib-title {
+      color: var(--primary-color);
+      font-size: 1.12em;
+      font-weight: bold;
+      margin-bottom: 4px;
+      margin-top: 0;
+      text-align: left;
+    }
+    table {
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 8px;
+    }
+    thead {
+      background: var(--row-bg);
+    }
+    th, td {
+      padding: 12px 8px;
+      text-align: left;
+      font-size: 1em;
+      word-break: break-word;
+    }
+    th {
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+    tr {
+      border-bottom: 1px solid #222;
+      transition: background 0.2s;
+    }
+    tr:hover {
+      background: #232323;
+    }
+    .status-paid {
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+    .status-pledged {
+      color: var(--secondary-color);
+      font-weight: bold;
+    }
+    .section-subtotal {
+      font-size: 1.08em;
+      font-weight: bold;
+      color: var(--primary-color);
+      text-align: right;
+      margin-bottom: 12px;
+      margin-top: 0;
+    }
+    .return-link {
+      text-align: center; 
+      margin: 16px auto 0 auto;
+      max-width: 800px;
+      padding: 10px;
+    }
+    .return-link a {
+      color: var(--primary-color); 
+      text-decoration: none; 
+      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      display: inline-block;
+    }
+    .return-link a:hover {
+      background: rgba(0, 255, 204, 0.08);
+      transform: translateY(-2px);
+    }
+    #noEntriesMsg {
+      color: #888;
+      font-size: 0.97em;
+      margin-top: 6px;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 8px;
+      }
+      .panel, .header {
+        width: 100%;
+        margin: 12px auto;
+        padding: 16px 8px;
+        border-radius: 10px;
+      }
+      .summary, .target-panel {
+        flex-direction: column;
+        gap: 12px;
+        font-size: 1em;
+      }
+      .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 7px;
+        padding: 10px 4px;
+      }
+      table, th, td {
+        font-size: 0.97em;
+      }
+      th, td {
+        padding: 8px 3px;
+      }
+      .purpose-container {
+        padding: 10px;
+      }
+      .refresh-btn, .print-btn {
+        padding: 11px 12px;
+      }
+      .section-subtotal {
+        font-size: 0.98em;
+      }
+    }
+    @media (max-width: 480px) {
+      .panel {
+        overflow-x: auto;
+      }
+      table {
+        min-width: 520px;
+      }
+    }
+    @media print {
+      .pay-buttons, .mmodal { display: none !important; }
+      .estimate-info { color: #222 !important; }
+      .mmodal-content { display: none !important; }
+      .filters-bar, .refresh-btn, .print-btn, .return-link {
+        display: none !important;
+      }
+      .panel, .purpose-container, .header, .summary, .target-panel, table {
+        box-shadow: none !important;
+        background: #fff !important;
+        color: #222 !important;
+      }
+      th, td, h1, h2, .purpose-label {
+        color: #111 !important;
+      }
+      .status-paid, .status-pledged, .purpose-text, .section-subtotal, .summary, .target-panel {
+        color: #111 !important;
+      }
+      .panel {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+      .summary, .target-panel {
+        font-size: 1.25em !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <div class="header">
+      <div class="logo-container">
+        <img src="DingsLogo.PNG" alt="Logo" />
+        <h1>Drop-a-Dime Contributions</h1>
+      </div>
+    </div>
+    <div class="purpose-container">
+      <span class="purpose-label">Fundraiser Purpose / Description:</span>
+      <div class="purpose-text" id="purposeText">Loading...</div>
+    </div>
+    <div class="pay-buttons">
+      <button class="pay-btn" onclick="showPayModal('mtn')">Pay via MTN</button>
+      <button class="pay-btn" onclick="showPayModal('airtel')">Pay via Airtel</button>
+    </div>
+    <div class="target-panel" id="targetPanel"></div>
+    <div class="estimate-info" id="estimateInfo"></div>
+    <div class="summary" id="summary"></div>
+    <div class="filters-bar" id="filtersBar">
+      <select id="filterStatus" onchange="render()">
+        <option value="">All Status</option>
+        <option value="paid">Paid</option>
+        <option value="pledged">Pledged</option>
+      </select>
+      <input type="text" id="filterSearch" placeholder="Search by name or message..." oninput="render()" />
+      <button onclick="clearFilters()">Clear</button>
+    </div>
+    <button class="refresh-btn" onclick="refreshData()">Refresh</button>
+    <button class="print-btn" onclick="window.print()">Print Report</button>
+    <div class="panel" id="contribPanel">
+      <div id="noEntriesMsg"></div>
+    </div>
+    <div class="return-link">
+      <a href="admin.html">Go to Admin Panel →</a>
+    </div>
+  </div>
+  <!-- Mobile Money Modal -->
+  <div class="mmodal" id="payModal">
+    <div class="mmodal-content" id="payModalContent">
+      <button class="close" onclick="closePayModal()">&times;</button>
+    </div>
+  </div>
+  <script>
+    const PAY_NUMBERS = {
+      mtn: { number: "0774178738", name: "Abbey Musoke", provider: "MTN Mobile Money" },
+      airtel: { number: "0704650600", name: "Peter Wacha", provider: "Airtel Money" }
+    };
+
+    function showPayModal(type) {
+      const info = PAY_NUMBERS[type];
+      if (!info) return;
+      document.getElementById('payModalContent').innerHTML = `
+        <button class="close" onclick="closePayModal()">&times;</button>
+        <h3>Pay with ${info.provider}</h3>
+        <div class="number" id="payNumField">${info.number}</div>
+        <button onclick="copyPayNumber('${info.number}')" style="margin-bottom:9px; background:#ffca28; color:#222; font-weight:bold; border-radius:6px; border:none; padding:7px 20px; cursor:pointer;">
+          Copy Number
+        </button>
+        <span id="copyMsg" style="display:none;" class="copied">Copied!</span>
+        <div style="margin-bottom:9px; color:#fff;">Name: <b>${info.name}</b></div>
+        <div style="font-size:1.04em; color:#fff;">Use your phone’s mobile money menu.<br>
+        <span style="font-size:0.93em; color:#aaa;">(For best results, copy number and paste in your app)</span></div>
+      `;
+      document.getElementById('payModal').style.display = "flex";
+    }
+    function copyPayNumber(num) {
+      navigator.clipboard.writeText(num);
+      const msg = document.getElementById('copyMsg');
+      if(msg) {
+        msg.style.display = "inline";
+        setTimeout(() => { msg.style.display = "none"; }, 1400);
+      }
+    }
+    function closePayModal() {
+      document.getElementById('payModal').style.display = "none";
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return ({
+          '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+        })[m];
+      });
+    }
+    function getFilteredEntries() {
+      let entries = [];
+      try {
+        entries = JSON.parse(localStorage.getItem('fundEntries') || '[]');
+        if (!Array.isArray(entries)) entries = [];
+      } catch { entries = []; }
+      const status = document.getElementById('filterStatus').value;
+      const search = (document.getElementById('filterSearch').value || '').trim().toLowerCase();
+      // Sort by date (latest first)
+      entries.sort((a, b) => {
+        if (a.date && b.date) return new Date(b.date) - new Date(a.date);
+        if (a.date) return -1;
+        if (b.date) return 1;
+        return 0;
+      });
+      return entries.filter(e => {
+        if (!e.name && !e.amount) return false;
+        if (status && e.status !== status) return false;
+        if (search) {
+          return (e.name || '').toLowerCase().includes(search) ||
+                 (e.message || '').toLowerCase().includes(search);
+        }
+        return true;
+      });
+    }
+    function fmtDate(dateStr) {
+      if (!dateStr) return "—";
+      try {
+        const d = new Date(dateStr);
+        if (isNaN(d)) return "—";
+        return d.toLocaleDateString(undefined, { day:'2-digit', month:'short', year:'numeric' });
+      } catch { return "—"; }
+    }
+    function render() {
+      const purpose = localStorage.getItem('fundPurpose') || "No fundraiser purpose has been set yet.";
+      document.getElementById('purposeText').textContent = purpose;
+      const entries = getFilteredEntries();
+      const groups = { paid: [], pledged: [] };
+      let totalPaid = 0, totalPledged = 0;
+      let allDates = [];
+      entries.forEach(e => {
+        let amt = (typeof e.amount === 'number' && !isNaN(e.amount)) ? e.amount : 0;
+        if (e.status === 'paid') { groups.paid.push(e); totalPaid += amt; }
+        if (e.status === 'pledged') { groups.pledged.push(e); totalPledged += amt; }
+        if (e.date) allDates.push(e.date);
+      });
+
+      // Main totals (all, not filtered)
+      let allEntries;
+      try {
+        allEntries = JSON.parse(localStorage.getItem('fundEntries') || '[]');
+        if (!Array.isArray(allEntries)) allEntries = [];
+      } catch { allEntries = []; }
+      let allPaid = 0, allPledged = 0, allDatesAll = [];
+      allEntries.forEach(e => {
+        let amt = (typeof e.amount === 'number' && !isNaN(e.amount)) ? e.amount : 0;
+        if (e.status === 'paid') allPaid += amt;
+        if (e.status === 'pledged') allPledged += amt;
+        if (e.date) allDatesAll.push(e.date);
+      });
+
+      document.getElementById('summary').innerHTML = `
+        <div>Total Paid: <span class="amount">${allPaid.toLocaleString()} UGX</span></div>
+        <div>Total Pledged: <span class="amount">${allPledged.toLocaleString()} UGX</span></div>
+        <div>Number of Entries: <span class="amount">${allEntries.length}</span></div>
+      `;
+
+      // Target/progress bar
+      const target = Number(localStorage.getItem('fundTarget')) || 0;
+      const totalRaised = allPaid + allPledged;
+      const percent = target ? Math.min(Math.round((totalRaised / target) * 100),100) : 0;
+      document.getElementById('targetPanel').innerHTML = `
+        <div>
+          <span style="color:#ffca28;font-weight:bold;">Target:</span>
+          <span style="font-weight:bold;">${target ? target.toLocaleString() + " UGX" : "(not set)"}</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" style="width:${target?percent:0}%"></div>
+        </div>
+        <div class="progress-summary">
+          ${target?
+            `Raised UGX ${totalRaised.toLocaleString()} of UGX ${target.toLocaleString()} (${percent}%)`
+            : `Raised UGX ${totalRaised.toLocaleString()}`}
+        </div>
+      `;
+
+      // Estimate: how long to achieve target?
+      let info = "";
+      if (target && allDatesAll.length && totalRaised < target) {
+        const minDate = new Date(Math.min(...allDatesAll.map(d=>new Date(d).getTime()).filter(Boolean)));
+        const now = new Date();
+        const days = Math.max(1, Math.round((now - minDate) / (1000*60*60*24)));
+        const ratePerDay = totalRaised / days;
+        if (ratePerDay > 0) {
+          const remain = target - totalRaised;
+          const estDays = Math.ceil(remain / ratePerDay);
+          const estDate = new Date(now.getTime() + estDays*24*60*60*1000);
+          info = `At this rate, the target may be reached in ${estDays} day${estDays>1?'s':''} (by <b>${fmtDate(estDate.toISOString())}</b>).`;
+        } else {
+          info = `No contributions yet to estimate time to target.`;
+        }
+      } else if (target && totalRaised >= target) {
+        info = `🎉 Target achieved!`;
+      }
+      document.getElementById('estimateInfo').innerHTML = info;
+
+      // Render grouped sections
+      let html = "";
+      function sectionHtml(title, arr, status) {
+        if (!arr.length) return "";
+        let subtotal = arr.reduce((sum, e) => sum + (typeof e.amount === 'number' && !isNaN(e.amount) ? e.amount : 0), 0);
+        return `
+        <div class="contrib-section">
+          <div class="contrib-title">${title} (${arr.length})</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Amount (UGX)</th>
+                <th>Status</th>
+                <th>Message</th>
+                <th>Date Paid</th>
+              </tr>
+            </thead>
+            <tbody>
+            ${arr.map(e => `
+              <tr>
+                <td>${e.name ? escapeHtml(e.name) : '<span style="color:#888;">(No Name)</span>'}</td>
+                <td>${(e.amount && !isNaN(e.amount)) ? Number(e.amount).toLocaleString() : ''}</td>
+                <td class="status-${status}">${status === 'pledged' ? '🅿️ Pledged' : '✅ Paid'}</td>
+                <td>${e.message ? escapeHtml(e.message) : ''}</td>
+                <td>${e.date ? fmtDate(e.date) : "—"}</td>
+              </tr>
+            `).join('')}
+            </tbody>
+          </table>
+          <div class="section-subtotal">
+            ${title} Subtotal: ${subtotal.toLocaleString()} UGX
+          </div>
+        </div>
+        `;
+      }
+      html += sectionHtml("✅ Paid", groups.paid, "paid");
+      html += sectionHtml("🅿️ Pledged", groups.pledged, "pledged");
+
+      document.getElementById('contribPanel').innerHTML = html;
+      document.getElementById('noEntriesMsg').textContent = (entries.length === 0) ? "No matching contributions found." : "";
+    }
+    function clearFilters() {
+      document.getElementById('filterStatus').value = "";
+      document.getElementById('filterSearch').value = "";
+      render();
+    }
+    function refreshData() { render(); }
+    window.onload = render;
+    // Modal close on outside click
+    window.onclick = function(event) {
+      const modal = document.getElementById('payModal');
+      if (event.target === modal) closePayModal();
+    };
+  </script>
+</body>
+</html>

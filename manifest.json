@@ -1,0 +1,21 @@
+{
+  "name": "Drop-a-Dime",
+  "short_name": "Drop-a-Dime",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#00ffcc",
+  "description": "Contributions, pledges, and fundraising made easy.",
+  "icons": [
+    {
+      "src": "DingsLogo.PNG",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "DingsLogo.PNG",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
